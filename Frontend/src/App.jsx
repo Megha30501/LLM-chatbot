@@ -1,14 +1,15 @@
-import { useState } from 'react'
-import './App.css'
+import { Routes, Route } from "react-router-dom";
+import LandingPage from "./LandingPage";
+import ChatPage from "./ChatPage"
 
-function App() {
-  const [count, setCount] = useState(0)
-
+const App = () => {
   return (
-    <>
-    <p>Hello World</p>
-    </>
-  )
-}
+    <Routes>
+      <Route path="/" element={<LandingPage />} />
+      <Route path="/chat/easy" element={<ChatPage persona="Easy to Handle" />} />
+      <Route path="/chat/hard" element={<ChatPage persona="Hard to Work With" />} />
+    </Routes>
+  );
+};
 
-export default App
+export default App;

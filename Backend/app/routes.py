@@ -1,10 +1,13 @@
-from flask import  request, redirect, url_for, jsonify
+from flask import  request, jsonify
 from app import app, db 
 import jwt
 import bcrypt
 from functools import wraps
 from datetime import datetime, timedelta
 from app.lmm_integration import call_llm_api
+import re
+
+
 from dotenv import load_dotenv
 import os
 
@@ -101,20 +104,23 @@ def login():
 
     return jsonify({'message': 'User logged in successfully!', 'token': token}), 200
 
-#3. Start Therapy Route (protected)
-@app.route('/start-therapy', methods=['POST'])
+# 3. Chat Route (protected)
+@app.route('/chat', methods=['POST'])
 @token_required
-def start_therapy(current_user):
-    data = request.get_json()
-    session_type = data.get('session_type')
+def chat(current_user):
+    if not request.is_json: 
+        return jsonify({"error": "Request must be JSON"}), 400
 
+    user_message = request.json.get('message')
+    session_type = request.json.get('session_type', 'easy') 
+
+    if not user_message:
+        return jsonify({"error": "No message provided"}), 400
+    
     if session_type not in ['easy', 'hard']:
         return jsonify({'message': 'Invalid session type!'}), 400
 
-    # Logic to start a therapy session based on session_type
     session_id = f"session_{current_user}_{session_type}_{datetime.utcnow().isoformat()}"
-
-    # Save the session info in Firestore (optional, depending on your design)
     db.collection('sessions').add({
         'user_id': current_user,
         'session_type': session_type,
@@ -123,22 +129,12 @@ def start_therapy(current_user):
         'start_time': datetime.utcnow(),
     })
 
-    return jsonify({'message': 'Session started successfully', 'session_id': session_id}), 200
-
-# 4. Chat Route (protected)
-@app.route('/chat', methods=['POST'])
-@token_required
-def chat(current_user):
-    if not request.is_json: 
-        return jsonify({"error": "Request must be JSON"}), 400
-
-    user_message = request.json.get('message')
-
-    if not user_message:
-        return jsonify({"error": "No message provided"}), 400
-
     try:
-        llm_response = call_llm_api(user_message)
-        return jsonify({"response": llm_response}), 200
+        llm_response = call_llm_api(session_type, user_message)
+
+        cleaned_response = re.sub(r'^[^a-zA-Z0-9]+', '', llm_response)  
+        cleaned_response = re.sub(r'[^a-zA-Z0-9]+$', '', cleaned_response)
+
+        return jsonify({"response": cleaned_response}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500

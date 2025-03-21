@@ -52,6 +52,8 @@ This API provides authentication and therapy session management using Flask and 
     "password": "yourpassword"
   }
 
+<img width="839" alt="image" src="https://github.com/user-attachments/assets/7dc1a2ab-1162-4ba8-a798-63c53e3bbdff" />
+
 ### 2. Login
 
 - **Endpoint:** `POST /login`
@@ -64,18 +66,9 @@ This API provides authentication and therapy session management using Flask and 
     "password": "yourpassword"
   }
 
-### 3. Start Therapy (Protected Route)
+<img width="839" alt="image" src="https://github.com/user-attachments/assets/1c51d865-afea-4cf0-9a2e-6f09fc91638a" />
 
-- **Endpoint:** `POST /start-therapy`
-- **Description:** Starts a therapy session.
-- **Request Headers:** Authorization: Bearer <token>
-- **Request Body:**
-  ```json
-  {
-  "session_type": "easy"  // or "hard"
-  }
-  
-### 4. Chat (Protected Route)
+### 3. Chat (Protected Route)
 
 - **Endpoint:** `POST /chat`
 - **Description:** Sends a message to the AI assistant.
@@ -83,6 +76,9 @@ This API provides authentication and therapy session management using Flask and 
 - **Request Body:**
   ```json
   {
-  "message": "Hello, how can I manage stress?"
+  "message": "How are you feeling today?",
+  "session_type": "hard"
   }
-  
+
+ 
+<img width="839" alt="Screenshot 2025-03-21 at 1 48 13 PM" src="https://github.com/user-attachments/assets/a9a5c8ba-eeb5-4dd3-be6f-60d7734306c5" />

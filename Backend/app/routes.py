@@ -137,7 +137,8 @@ def chat(current_user):
     if not user_message:
         return jsonify({"error": "No message provided"}), 400
 
-    llm_response = call_llm_api(user_message)
-
-    # Return the LLM response to the client
-    return jsonify({"response": llm_response}), 200
+    try:
+        llm_response = call_llm_api(user_message)
+        return jsonify({"response": llm_response}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500

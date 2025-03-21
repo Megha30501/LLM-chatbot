@@ -1,4 +1,3 @@
-// App.jsx
 import React, { useState } from 'react';
 import './index.css';
 import LandingPage from './components/LandingPage';
@@ -57,8 +56,6 @@ function App() {
       </p>
     </div>
   );
-
-// Render the appropriate component based on currentView
   const renderView = () => {
     switch (currentView) {
       case 'login':
@@ -88,7 +85,6 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4">
-      {/* Header with logout if user is logged in */}
       {user && (
         <div className="w-full max-w-4xl flex justify-between items-center mb-4">
           <h1 className="text-xl font-semibold text-indigo-700">Therapy Practice Simulator</h1>
@@ -106,7 +102,7 @@ function App() {
       
       {/* Main content */}
       {!selectedOption ? (
-        renderView() // This will render login, register, or landing
+        renderView() 
       ) : loading ? (
         <LoadingScreen />
       ) : (

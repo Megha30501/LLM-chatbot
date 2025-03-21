@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import { ArrowRight, Mail, Shield, User, Lock } from 'lucide-react';
+import axios from 'axios';
 
 const Registration = ({ onRegister, onSwitchToLogin }) => {
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
     email: '',
     password: '',
     confirmPassword: ''
@@ -21,11 +20,8 @@ const Registration = ({ onRegister, onSwitchToLogin }) => {
   };
 
   const validateForm = () => {
-    if (!formData.firstName.trim() || 
-        !formData.lastName.trim() || 
-        !formData.email.trim() || 
-        !formData.password.trim()) {
-      setError('All fields are required');
+    if ( !formData.email.trim() ||  !formData.password.trim()) {
+      setError('Email and password are required');
       return false;
     }
     
@@ -47,7 +43,7 @@ const Registration = ({ onRegister, onSwitchToLogin }) => {
     return true;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     
@@ -57,16 +53,24 @@ const Registration = ({ onRegister, onSwitchToLogin }) => {
     
     setIsLoading(true);
     
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
-      // For demo, simply pass the form data to parent
-      onRegister({
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        email: formData.email
+    try {
+      const response = await axios.post('http://127.0.0.1:5000/signup', {
+        email: formData.email,
+        password: formData.password,
       });
-    }, 1500);
+
+      setIsLoading(false);
+      onRegister({
+        email: formData.email,
+      });
+    } catch (error) {
+      setIsLoading(false);
+      if (error.response && error.response.data) {
+        setError(error.response.data.message);
+      } else {
+        setError('An error occurred. Please try again.');
+      }
+    }
   };
 
   return (
@@ -98,37 +102,6 @@ const Registration = ({ onRegister, onSwitchToLogin }) => {
         
         <form onSubmit={handleSubmit}>
           <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-1">
-                  First Name
-                </label>
-                <input
-                  id="firstName"
-                  name="firstName"
-                  type="text"
-                  className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500"
-                  value={formData.firstName}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              
-              <div>
-                <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-1">
-                  Last Name
-                </label>
-                <input
-                  id="lastName"
-                  name="lastName"
-                  type="text"
-                  className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500"
-                  value={formData.lastName}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-            </div>
             
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">

@@ -1,10 +1,11 @@
-from flask import  request, redirect, url_for, jsonify
+from flask import  request, jsonify
 from app import app, db 
 import jwt
 import bcrypt
 from functools import wraps
 from datetime import datetime, timedelta
-from app.lmm_integration import call_llm_api
+# from app.lmm_integration import call_llm_api
+
 from dotenv import load_dotenv
 import os
 
@@ -126,19 +127,19 @@ def start_therapy(current_user):
     return jsonify({'message': 'Session started successfully', 'session_id': session_id}), 200
 
 # 4. Chat Route (protected)
-@app.route('/chat', methods=['POST'])
-@token_required
-def chat(current_user):
-    if not request.is_json: 
-        return jsonify({"error": "Request must be JSON"}), 400
+# @app.route('/chat', methods=['POST'])
+# @token_required
+# def chat(current_user):
+#     if not request.is_json: 
+#         return jsonify({"error": "Request must be JSON"}), 400
 
-    user_message = request.json.get('message')
+#     user_message = request.json.get('message')
 
-    if not user_message:
-        return jsonify({"error": "No message provided"}), 400
+#     if not user_message:
+#         return jsonify({"error": "No message provided"}), 400
 
-    try:
-        llm_response = call_llm_api(user_message)
-        return jsonify({"response": llm_response}), 200
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+#     try:
+#         llm_response = call_llm_api(user_message)
+#         return jsonify({"response": llm_response}), 200
+#     except Exception as e:
+#         return jsonify({"error": str(e)}), 500

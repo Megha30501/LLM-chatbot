@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ArrowRight, LogIn, Shield, User } from 'lucide-react';
+import axios from 'axios';
 
 const Login = ({ onLogin, onSwitchToRegister }) => {
   const [email, setEmail] = useState('');
@@ -7,7 +8,7 @@ const Login = ({ onLogin, onSwitchToRegister }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     
@@ -18,16 +19,26 @@ const Login = ({ onLogin, onSwitchToRegister }) => {
     
     setIsLoading(true);
     
-    // Simulate API call - replace with actual authentication
-    setTimeout(() => {
+    try {
+      const response = await axios.post('http://127.0.0.1:5000/login', {
+        email: email,
+        password: password,
+      });
+      const { token } = response.data;
+      
+      localStorage.setItem('authToken', token);
+
+      onLogin({ email, token });
+
       setIsLoading(false);
-      // For demo, just check if email contains @
-      if (email.includes('@')) {
-        onLogin({ email });
+    } catch (error) {
+      setIsLoading(false);
+      if (error.response) {
+        setError(error.response.data.message);
       } else {
-        setError('Invalid credentials. Please try again.');
+        setError('An error occurred. Please try again.');
       }
-    }, 1000);
+    }
   };
 
   return (

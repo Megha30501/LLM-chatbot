@@ -1,0 +1,8 @@
+Flask
+flask-cors
+firebase-admin
+openai
+python-dotenv
+PyJWT
+bcrypt
+requests
